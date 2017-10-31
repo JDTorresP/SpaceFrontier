@@ -1,3 +1,4 @@
+// Felipe Iregui: Me parece que estan utilizando los componentes de react muy bien, muchas jerarquias y orden, hace que sea mas facil de entender y para ustedes de cambiar
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {createContainer} from 'meteor/react-meteor-data';
