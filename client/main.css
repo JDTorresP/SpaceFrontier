@@ -205,3 +205,164 @@ a:link {
 .form button:hover {
   background-color: #ffc107;
 }
+
+/* 
+ Shortcuts */
+
+@import url(https://fonts.googleapis.com/css?family=Noto+Sans);
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,300|Quattrocento);
+@import url(https://fonts.googleapis.com/css?family=Geostar+Fill);
+
+ .welcome2{
+   font-family: 'starFont', cursive;
+  display: block;
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  z-index: 1;
+  font-size: 10px;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.icon-keyboard {
+  cursor: pointer;
+ 	font-family: 'Geostar Fill';
+ 	speak: none;
+ 	font-style: normal;
+ 	font-weight: normal;
+ 	font-variant: normal;
+  font-size: 2em;
+	 text-transform: none;
+	 line-height: 1;
+	 -webkit-font-smoothing: antialiased;
+  opacity: 0;
+  transition: opacity 70ms linear, color 70ms linear;
+  -moz-transition: opactiy 70ms linear, color 70ms linear;
+  -ms-transition: opacity 70ms linear, color 70ms linear;
+  -o-transition: opacity 70ms linear, color 70ms linear;
+  -webkit-transition: opacity 70ms linear, color 70ms linear;
+}
+
+.icon-keyboard:before {
+	content: "\e000";
+}
+
+.icon-keyboard:hover {
+  color: #444;
+}
+
+.container2 li {
+  padding: 15px 0;
+}
+
+.container2 li:hover .icon-keyboard {
+  opacity: 1;
+}
+
+.container2 li:hover .description {
+  color: whitesmoke;
+}
+
+.container2 span {
+  vertical-align: middle;
+} 
+
+ .container2 li + li {
+  border-top: 1px solid #cfcfcf;
+}
+
+.container2 li label {
+  display: inline-block;
+  
+}
+
+.sequential {
+  margin: 0 5px;
+} 
+
+.description {
+  display: inline-block;
+  font-family: 'Roboto', sans-serif;
+  font-size: 20px;
+  transition: color 70ms linear;
+  -moz-transition: color 70ms linear;
+  -ms-transition: color 70ms linear;
+  -o-transition: color 70ms linear;
+  -webkit-transition: color 70ms linear;
+  width: 300px;
+} 
+.description2 {
+  display: inline-block;
+  font-family: 'Roboto', sans-serif;
+  font-size: 20px;
+  transition: color 70ms linear;
+  -moz-transition: color 70ms linear;
+  -ms-transition: color 70ms linear;
+  -o-transition: color 70ms linear;
+  -webkit-transition: color 70ms linear;
+  width: 300px;
+} 
+.description3 {
+  color: black;
+  display: inline-block;
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  transition: color 70ms linear;
+  -moz-transition: color 70ms linear;
+  -ms-transition: color 70ms linear;
+  -o-transition: color 70ms linear;
+  -webkit-transition: color 70ms linear;
+  width: 300px;
+} 
+
+label .key:hover, .key2:hover{
+ background-color: #ffc107;
+ color: black;
+}
+.key {
+  color: white;
+  display: inline-block;
+  background: #eee;
+  border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  box-shadow: inset 0 0 25px #e8e8e8, 0 1px 0 #c3c3c3, 0 2px 0 #c9c9c9, 0 2px 3px #333;
+  -moz-box-shadow: inset 0 0 25px #e8e8e8, 0 1px 0 #c3c3c3, 0 2px 0 #c9c9c9, 0 2px 3px #333;
+  -webkit-box-shadow: inset 0 0 25px #e8e8e8, 0 1px 0 #c3c3c3, 0 2px 0 #c9c9c9, 0 2px 3px #333, inset 1px 0 0 #ccc, inset -1px 0 0 #ccc;
+  box-sizing: border-box;
+  border-top: 1px solid #efefef;
+  height: 41px;
+  font-family: 'Geostar Fill', sans-serif;
+  margin: 0 1px;
+  text-align: center;
+  font-size: 28px;
+  text-decoration: none;
+  text-transform: uppercase;
+  width: 44px;
+} 
+
+.key2 {
+  color: white;
+  display: inline-block;
+  background: #eee;
+  border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  box-shadow: inset 0 0 25px #e8e8e8, 0 1px 0 #c3c3c3, 0 2px 0 #c9c9c9, 0 2px 3px #333;
+  -moz-box-shadow: inset 0 0 25px #e8e8e8, 0 1px 0 #c3c3c3, 0 2px 0 #c9c9c9, 0 2px 3px #333;
+  -webkit-box-shadow: inset 0 0 25px #e8e8e8, 0 1px 0 #c3c3c3, 0 2px 0 #c9c9c9, 0 2px 3px #333, inset 1px 0 0 #ccc, inset -1px 0 0 #ccc;
+  box-sizing: border-box;
+  border-top: 1px solid #efefef;
+  height: 41px;
+  font-family: 'Geostar Fill', sans-serif;
+  margin: 0 1px;
+  text-align: center;
+  padding-top: 4px;
+  font-size: 20px;
+  text-decoration: none;
+  text-transform: uppercase;
+  width: 84px;
+} 
+

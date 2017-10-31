@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Ship from '../sketches/Ship.js';
-import OwnShip from '../sketches/OwnShip.js'
+import OwnShip from '../sketches/OwnShip.js';
+import Bullet from '../sketches/Bullet.js';
 import Asteroid from '../sketches/Asteroids.js';
 import {asteroidVertices, randomNumBetweenExcluding, rotatePoint, randomNumBetween } from '../sketches/helpers.js'
 import ScoreE from './ScoreE.jsx';
@@ -32,7 +33,7 @@ export class MultiGame extends Component {
       topScore: localStorage['topscore'] || 0,
       inGame: false,
       currentID:0,
-      currentIDA:0,
+      currentIDA:0
     }
     this.ownShip={
         velocity : {
@@ -73,6 +74,11 @@ export class MultiGame extends Component {
     this.renderScores=this.renderScores.bind(this);
     this.postMovBullet=this.postMovBullet.bind(this);
     this.pintarBullet=this.pintarBullet.bind(this);
+    this.createBullet=this.createBullet.bind(this);
+    this.updateBullets= this.updateBullets.bind(this);
+    this.checkCollisionsWith=this.checkCollisionsWith.bind(this);
+    this.checkCollision=this.checkCollision.bind(this);
+    this.manageCollitionLogic=this.manageCollitionLogic.bind(this);
   }
  guidGenerator() {
     var S4 = function() {
@@ -91,12 +97,13 @@ export class MultiGame extends Component {
     });
   }
 
+
   handleKeys(value, e){
     let keys = this.state.keys;
-    if( e.keyCode === KEY.A) keys.left  = value;
-    if(e.keyCode === KEY.D) keys.right = value;
-    if( e.keyCode === KEY.W) keys.up    = value;
-    if(e.keyCode === KEY.SPACE) keys.space = value;
+    if( e.keyCode === this.props.keys.left) keys.left  = value;
+    if(e.keyCode === this.props.keys.right) keys.right = value;
+    if( e.keyCode === this.props.keys.up) keys.up    = value;
+    if(e.keyCode === this.props.keys.shoot) keys.space = value;
     this.setState({
       keys : keys
     });
@@ -118,7 +125,7 @@ export class MultiGame extends Component {
     window.removeEventListener('resize', this.handleKeys);
     window.removeEventListener('resize', this.handleResize);
   }
-
+  
   update() {
     const context = this.state.context;
     const keys = this.state.keys;
@@ -141,7 +148,7 @@ export class MultiGame extends Component {
     // }
 
     // Check for colisions
-    // this.checkCollisionsWith(this.bullets, this.asteroids);
+    this.checkCollisionsWith(this.props.bullets, this.props.ships,"BS");
     // this.checkCollisionsWith(this.ship, this.asteroids);
 
     // Remove or render
@@ -152,6 +159,8 @@ export class MultiGame extends Component {
    
     this.updateShips();
     this.updateAsteroids();
+    this.updateBullets();
+    
     //this.updateParticles();
 
     context.restore();
@@ -187,7 +196,8 @@ export class MultiGame extends Component {
          x: xN,
          y: yN,
          r: rN,
-         id: idN
+         id: idN,
+         radius :20
     }
     // console.log('x inicial:',xN);
     // console.log('y inicial:',yN);
@@ -222,9 +232,14 @@ export class MultiGame extends Component {
   createAsteroid(a){
     this.props.cAsteroid(a);
   }
-  updateShips(){
+  createBullet(a)
+{
+  console.log("se inserta el bullet");
+  this.props.cBullet(a);
+} 
+ updateShips(){
     this.checkMoveShip();
-    this.props.uShip(this.ownShip.position.x,this.ownShip.position.y,this.ownShip.rotation,this.state.currentID);
+    this.props.uShip(this.ownShip.position.x,this.ownShip.position.y,this.ownShip.rotation,this.state.currentID,this.ownShip.radius);
     this.props.ships.map((s)=>{
         if(s.id == this.state.currentID){
             // console.log("true")
@@ -269,6 +284,22 @@ updateParticles(){
     //   })
 
   }
+  updateBullets(){
+    this.props.bullets.map((b)=>{
+      if(b.ownerID==this.state.currentID){
+        this.postMovBullet(b);
+          if(b.delete){
+          this.props.dBullet(b.id);
+        }
+         this.props.uBullet(b,b._id);
+         this.pintarBullet(b.position.x,b.position.y,b.rotation);
+      }
+      else{
+        this.pintarBullet(b.position.x,b.position.y,b.rotation);
+      }
+    })
+
+  }
 
 checkMoveShip(){
     // Controls
@@ -283,8 +314,10 @@ checkMoveShip(){
     }
     if(this.state.keys.space && Date.now() - this.ownShip.lastShot > 300){
       
-      // const bullet = new Bullet({ship: this});
-      // this.create(bullet, 'bullets');
+       const bullet = new Bullet({ship: this.ownShip});
+       bullet.ownerID = this.state.currentID;
+       console.log("se Creo el bullet, el id del player es ", bullet)
+       this.createBullet(bullet);
       this.ownShip.lastShot = Date.now();
     }
   }
@@ -391,8 +424,8 @@ postMovShip(){
     // Delete if it goes out of bounds
     if ( b.position.x < 0
       || b.position.y < 0
-      || b.position.x > state.screen.width
-      || b.position.y > state.screen.height ) {
+      || b.position.x > this.state.screen.width
+      || b.position.y > this.state.screen.height ) {
     this.delete = true;
     }
   }
@@ -459,30 +492,39 @@ postMovShip(){
     }
   }
 
-  checkCollisionsWith(items1, items2) {
-    var a = items1.length - 1;
-    var b;
-    for(a; a > -1; --a){
-      b = items2.length - 1;
-      for(b; b > -1; --b){
-        var item1 = items1[a];
-        var item2 = items2[b];
-        if(this.checkCollision(item1, item2)){
-          item1.destroy();
-          item2.destroy();
-        }
-      }
+  checkCollisionsWith(b, s,typ) {
+    if(typ=="BS"){
+        b.map((bullet)=>{
+        s.map((ship)=>{
+          if(bullet.ownerID!=ship.id)
+            {
+              if(this.checkCollision(bullet, ship)){
+                this.props.dShip(ship._id);
+                this.props.dBullet(bullet._id);
+                this.manageCollitionLogic();
+                //this.props.dPlayer(this.props.currentPlayer._id);
+                // this.gameOver.bind(this);
+                console.log("chao papa");
+
+              }
+            }
+        })
+      })
     }
   }
 
   checkCollision(obj1, obj2){
-    var vx = obj1.position.x - obj2.position.x;
-    var vy = obj1.position.y - obj2.position.y;
+    var vx = obj1.position.x - obj2.x;
+    var vy = obj1.position.y - obj2.y;
     var length = Math.sqrt(vx * vx + vy * vy);
     if(length < obj1.radius + obj2.radius){
       return true;
     }
     return false;
+  }
+
+  manageCollitionLogic(){
+
   }
 
   //metodos de pintura
@@ -579,7 +621,7 @@ postMovShip(){
       message = this.state.currentScore + ' Points'
     }
 
-    if(!this.state.inGame){
+    if(!this.state.inGame ){
       endgame = (
         <div className="endgame">
           <p>Game over!!!</p>

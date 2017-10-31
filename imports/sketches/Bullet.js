@@ -13,6 +13,7 @@ export default class Bullet {
       y:posDelta.y / 2
     };
     this.radius = 2;
+    this.ownerID = 1;
   }
 
   destroy(){

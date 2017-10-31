@@ -35,7 +35,8 @@ class App extends Component {
                     r: 10
                 }
             ],
-            currentID:''
+            currentID:'',
+            ks:""
         }
         this.width = 900;
         this.height = 654;
@@ -44,11 +45,17 @@ class App extends Component {
         this.crearShip = this.crearShip.bind(this);
         this.crearParticula = this.crearParticula.bind(this);
         this.updateShip = this.updateShip.bind(this);
+        this.deleteShip = this.deleteShip.bind(this);
         this.selectionSingle = this.selectionSingle.bind(this);
         this.selectionMultiplayer = this.selectionMultiplayer.bind(this);
         this.deleteParticle = this.deleteParticle.bind(this);
         this.crearAsteroide = this.crearAsteroide.bind(this);
         this.crearBullet = this.crearBullet.bind(this);
+        this.updateBullet = this.updateBullet.bind(this);
+        this.deleteBullet = this.deleteBullet.bind(this);
+        this.deletePlayer = this.deletePlayer.bind(this);
+        this.selectionMultiplayer2=this.selectionMultiplayer2.bind(this);
+ 
     }
     
     crearShip(item){
@@ -76,17 +83,27 @@ class App extends Component {
             multiplayer:!this.state.multiplayer
         })
     }
+    selectionMultiplayer2(keys){
+        this.setState({
+            multiplayer:!this.state.multiplayer
+        })
+        this.setState({
+            ks:keys
+        })
+    }
+
     logOut(){
         this.setState({
             currentPlayer:''
         })
     }
-    updateShip(Nx,Ny,Nr,idN){
+    updateShip(Nx,Ny,Nr,idN,rad){
         Shipsdb.update(this.state.currentID, {
         x: Nx,
         y: Ny,
         r: Nr,
-        id:idN
+        id:idN,
+        radius:rad
         });
     }
     updateParticle(life,sz,p,v,id){
@@ -109,6 +126,24 @@ class App extends Component {
           score : a.score,
           vertices : a.vertices
         });
+    }
+    updateBullet(b,id){
+        BulletsDB.update(id,{
+            position:b.position,
+            rotation:b.rotation,
+            velocity:b.velocity,
+            radius:b.radius,
+            ownerID:b.ownerID
+        });
+    }
+    deletePlayer(id){
+        Players.remove(id);
+    }
+    deleteShip(id){
+        Shipsdb.remove(id);
+    }
+    deleteBullet(id){
+        BulletsDB.remove(id);
     }
     deleteParticle(id){
         ParticlesDB.remove(id);
@@ -175,6 +210,7 @@ class App extends Component {
               <Principal onClick = {this.onEnterPlayer}  
               single = {this.selectionSingle}
               multi ={this.selectionMultiplayer}
+              multi2 ={this.selectionMultiplayer2}
               under={this.state.multi}/>
           </div>
       )
@@ -201,10 +237,13 @@ class App extends Component {
                 menu = (
                 <div>
                     <MultiGame
+                    currentPlayer = {this.state.currentPlayer}
                     players = {this.props.players}
+                    dplayer = {this.deletePlayer}
                     cShip={this.crearShip}
                     ships={this.props.shiplist}
                     uShip={this.updateShip}
+                    dShip={this.deleteShip}
                     currentShipID={this.state.currentID}
                     cParticle={this.crearParticula}
                     particles={this.props.particlesList}
@@ -215,6 +254,9 @@ class App extends Component {
                     uAsteroid={this.updateAsteroid}
                     cBullet={this.crearBullet}
                     bullets={this.props.bullets}
+                    uBullet={this.updateBullet}
+                    dBullet={this.deleteBullet}
+                    keys = {this.state.ks}
                     />
             </div>
                 )
