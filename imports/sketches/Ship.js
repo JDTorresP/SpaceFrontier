@@ -1,3 +1,4 @@
+// FeliPE Iregui: Bueno uso de ES6 varios let y arrow functions
 import Bullet from './Bullet';
 import Particle from './Particle';
 import { rotatePoint, randomNumBetween } from './helpers';
