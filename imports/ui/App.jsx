@@ -36,7 +36,8 @@ class App extends Component {
                 }
             ],
             currentID:'',
-            ks:""
+            ks:"",
+            defaultC:true
         }
         this.width = 900;
         this.height = 654;
@@ -55,6 +56,7 @@ class App extends Component {
         this.deleteBullet = this.deleteBullet.bind(this);
         this.deletePlayer = this.deletePlayer.bind(this);
         this.selectionMultiplayer2=this.selectionMultiplayer2.bind(this);
+        this.changeDefaults=this.changeDefaults.bind(this);
  
     }
     
@@ -148,6 +150,11 @@ class App extends Component {
     deleteParticle(id){
         ParticlesDB.remove(id);
     }
+    changeDefaults(){
+        this.setState({
+            defaultC:!this.state.defaultC
+        })
+    }
     
     onEnterPlayer(name,pass) {
         //Deberiamos validar un monton de cosas
@@ -211,6 +218,7 @@ class App extends Component {
               single = {this.selectionSingle}
               multi ={this.selectionMultiplayer}
               multi2 ={this.selectionMultiplayer2}
+              changeDefaults = {this.changeDefaults}
               under={this.state.multi}/>
           </div>
       )
@@ -257,6 +265,7 @@ class App extends Component {
                     uBullet={this.updateBullet}
                     dBullet={this.deleteBullet}
                     keys = {this.state.ks}
+                    defaultC ={this.state.defaultC}
                     />
             </div>
                 )

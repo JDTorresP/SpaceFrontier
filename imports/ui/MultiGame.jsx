@@ -6,9 +6,10 @@ import Asteroid from '../sketches/Asteroids.js';
 import {asteroidVertices, randomNumBetweenExcluding, rotatePoint, randomNumBetween } from '../sketches/helpers.js'
 import ScoreE from './ScoreE.jsx';
 const KEY = {
-  A: 65,
-  D: 68,
-  W: 87,
+  LEFT:  37,
+  RIGHT: 39,
+  UP: 38,
+  DOWN:40,
   SPACE: 32
 };
 
@@ -78,7 +79,8 @@ export class MultiGame extends Component {
     this.updateBullets= this.updateBullets.bind(this);
     this.checkCollisionsWith=this.checkCollisionsWith.bind(this);
     this.checkCollision=this.checkCollision.bind(this);
-    this.manageCollitionLogic=this.manageCollitionLogic.bind(this);
+    this.gameOver=this.gameOver.bind(this);
+    this.deleteBulletsOfShip=this.deleteBulletsOfShip.bind(this);
   }
  guidGenerator() {
     var S4 = function() {
@@ -100,10 +102,25 @@ export class MultiGame extends Component {
 
   handleKeys(value, e){
     let keys = this.state.keys;
-    if( e.keyCode === this.props.keys.left) keys.left  = value;
-    if(e.keyCode === this.props.keys.right) keys.right = value;
-    if( e.keyCode === this.props.keys.up) keys.up    = value;
-    if(e.keyCode === this.props.keys.shoot) keys.space = value;
+    let l,u,d,r,s;
+    if(this.props.defaultC){
+      l = KEY.LEFT;
+      u = KEY.UP;
+      d = KEY.DOWN;
+      r = KEY.RIGHT;
+      s = KEY.SPACE;
+    }else{
+      l= this.props.keys.left;
+      u= this.props.keys.up;
+      d= this.props.keys.down;
+      r= this.props.keys.right;
+      s= this.props.keys.shoot;
+    }
+    
+    if( e.keyCode === l ) keys.left  = value;
+    if(e.keyCode === r) keys.right = value;
+    if( e.keyCode === u) keys.up    = value;
+    if(e.keyCode === s) keys.space = value;
     this.setState({
       keys : keys
     });
@@ -125,6 +142,11 @@ export class MultiGame extends Component {
     window.removeEventListener('resize', this.handleKeys);
     window.removeEventListener('resize', this.handleResize);
   }
+
+  componentWillReceiveProps  ()  {
+    this.ownShip._id=this.props.currentShipID;
+  }
+  
   
   update() {
     const context = this.state.context;
@@ -148,7 +170,7 @@ export class MultiGame extends Component {
     // }
 
     // Check for colisions
-    this.checkCollisionsWith(this.props.bullets, this.props.ships,"BS");
+    this.checkCollisionsWith(this.props.bullets, this.ownShip ,"BS");
     // this.checkCollisionsWith(this.ship, this.asteroids);
 
     // Remove or render
@@ -432,7 +454,7 @@ postMovShip(){
 
   gameOver(){
     this.setState({
-      inGame: false,
+      inGame: !this.state.inGame
     });
 
     // Replace top score
@@ -473,6 +495,13 @@ postMovShip(){
     }
   }
 
+  deleteBulletsOfShip(){
+    this.props.bullets.map((bullet)=>{
+      if(bullet.ownerID == this.state.currentID){         
+          this.props.dBullet(bullet._id);
+      }
+    })
+  }
   createObject(item, group){
     this[group].push(item);
   }
@@ -495,36 +524,28 @@ postMovShip(){
   checkCollisionsWith(b, s,typ) {
     if(typ=="BS"){
         b.map((bullet)=>{
-        s.map((ship)=>{
-          if(bullet.ownerID!=ship.id)
-            {
-              if(this.checkCollision(bullet, ship)){
-                this.props.dShip(ship._id);
-                this.props.dBullet(bullet._id);
-                this.manageCollitionLogic();
-                //this.props.dPlayer(this.props.currentPlayer._id);
-                // this.gameOver.bind(this);
-                console.log("chao papa");
-
+          if(this.checkCollision(bullet, s)){
+                if(bullet.ownerID != this.state.currentID){
+                    console.log(s._id);
+                    this.props.dShip(s._id);
+                    this.deleteBulletsOfShip();
+                    this.props.dBullet(bullet._id);
+                    //this.props.dPlayer(this.props.currentPlayer._id);
+                    this.gameOver();
+                }
               }
-            }
-        })
       })
     }
   }
 
   checkCollision(obj1, obj2){
-    var vx = obj1.position.x - obj2.x;
-    var vy = obj1.position.y - obj2.y;
+    var vx = obj1.position.x - obj2.position.x;
+    var vy = obj1.position.y - obj2.position.y;
     var length = Math.sqrt(vx * vx + vy * vy);
     if(length < obj1.radius + obj2.radius){
       return true;
     }
     return false;
-  }
-
-  manageCollitionLogic(){
-
   }
 
   //metodos de pintura
@@ -649,7 +670,7 @@ postMovShip(){
         { endgame }
         <span className="score current-score" >Score: {this.state.currentScore}</span>
         <span className="controls" >
-          Use [A][S][W][D] to MOVE<br/>
+          <h3>Use [↑][↓][←][→]</h3> to MOVE<br/>
           Use [SPACE] to SHOOT
         </span>
         <canvas ref="canvas"

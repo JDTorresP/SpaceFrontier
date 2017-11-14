@@ -306,6 +306,7 @@ onClickMulti2(){
   };
     this.props.multi2(k);
     this.props.onClick(this.state.name,this.state.pass);
+    this.props.changeDefaults();
 }
 onClickMulti(){
     this.props.multi();
