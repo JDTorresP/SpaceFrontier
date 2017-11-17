@@ -1,3 +1,4 @@
+// Felipe Iregui: Aunque no se si sirva muy bien , john recomendo hacer essos condicionales directo con meteor.user()
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {createContainer} from 'meteor/react-meteor-data';
